@@ -1,6 +1,6 @@
 using System;
 
-namespace AwsDotnetCsharp
+namespace StudentIT.Roster.Summary
 {
     public class Handler
     {

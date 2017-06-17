@@ -247,3 +247,6 @@ _Pvt_Extensions
 
 # Deployment package
 deploy-package.zip
+
+# Secrets
+env.yml
