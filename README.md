@@ -41,7 +41,7 @@ serverless deploy --stage production -s $STAGE
 #### Code changes
 
 ```
-serverless deploy function -f studentit-roster-summary -s $STAGE
+serverless deploy function -f summary -s $STAGE
 ```
 
 ### Removing all resources
@@ -54,13 +54,13 @@ serverless remove
 ### Invoking
 
 ```
-serverless invoke -f studentit-roster-summary -s $STAGE -l
+serverless invoke -f summary -s $STAGE -l
 ```
 
 ### Logs
 
 ```
-serverless logs -f studentit-roster-summary -s $STAGE -t
+serverless logs -f summary -s $STAGE -t
 ```
 
 
