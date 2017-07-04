@@ -7,13 +7,11 @@ function ZipFiles( $zipfilename, $sourcedir )
         $zipfilename, $compressionLevel, $false)
 }
 
+$framework = "netcoreapp1.1"
+$publishDirectory = "bin/release/$framework"
+$packageName = "studentit-roster-summary.zip"
+
 dotnet restore
-dotnet publish -c release
-if ($LASTEXITCODE -ne 0) { return }
+dotnet lambda package --configuration Release --framework $framework
 
-$publishDirectory = "bin/release/netcoreapp1.0/publish"
-$packageName = "deploy-package.zip"
-
-rm "$publishDirectory/$packageName" -ErrorAction SilentlyContinue
-ZipFiles "$(pwd)/$packageName" "$(pwd)/$publishDirectory"
-mv "$packageName" $publishDirectory
+Exit $LASTEXITCODE

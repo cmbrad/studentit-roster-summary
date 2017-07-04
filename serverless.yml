@@ -1,5 +1,8 @@
 service: studentit-roster
 
+plugins:
+  - serverless-secrets-plugin
+
 provider:
   name: aws
   stage: dev
@@ -11,15 +14,12 @@ provider:
     Purpose: StudentIT
 
 package:
-  artifact: bin/release/netcoreapp1.0/publish/deploy-package.zip
+  artifact: bin/release/netcoreapp1.1/studentit-roster-summary.zip
 
 functions:
   summary:
-    handler: CsharpHandlers::StudentIT.Roster.Summary.Handler::Hello
-
-   #events:
-   #  - schedule: rate(10 minutes)
-    environment: ${file(env.yml):${self:custom.stage}}
+    handler: CsharpHandlers::StudentIT.Roster.Summary.Handler::MakeSummary
+    environment: ${file(secrets.${self:custom.stage}.yml)}
 
 custom:
   stage: "${opt:stage, self:provider.stage}"

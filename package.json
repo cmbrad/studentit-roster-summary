@@ -1,0 +1,18 @@
+{
+  "name": "studentit-roster-summary",
+  "version": "1.0.0",
+  "description": "Managers need to verify hours against the roster before they can approve timecards. This program creates an email summary of the last roster period (2 weeks) to assist in this process.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmbrad/studentit-roster-summary.git"
+  },
+  "author": "Christopher Bradley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cmbrad/studentit-roster-summary/issues"
+  },
+  "homepage": "https://github.com/cmbrad/studentit-roster-summary#readme",
+  "dependencies": {
+    "serverless-secrets-plugin": "^0.0.1"
+  }
+}
