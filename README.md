@@ -25,7 +25,7 @@ serverless config credentials -p aws --key $YOURKEY --secret $YOURSECRET
 ### Windows
 
 ```
-./build.ps1
+powershell .\build.ps1
 ```
 
 ## Deployment
@@ -61,6 +61,13 @@ serverless invoke -f summary -s $STAGE -l
 
 ```
 serverless logs -f summary -s $STAGE -t
+```
+
+### Helpful commands
+
+```
+powershell .\build.ps1 && serverless deploy -s dev && serverless invoke -f summary
+serverless logs -f summary -t
 ```
 
 
