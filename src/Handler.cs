@@ -3,7 +3,6 @@ using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 
 namespace StudentIT.Roster.Summary
 {
@@ -85,14 +84,14 @@ namespace StudentIT.Roster.Summary
                         if (eventItem.Status == "cancelled")
                         {
                             // Ignore cancelled events since it means the shift was not actully worked
-                            Console.WriteLine($"[DEBUG] Skipping cancelled event {startTime} - {endTime} @ {location}");
+                            Console.WriteLine($"Skipping cancelled event {startTime} - {endTime} @ {location}");
                             continue;
                         }
                         if (eventItem.Attendees.Count == 0)
                         {
                             // This event is probably a valid shift, but we have no way of knowing
                             // Who owns it. Log it and continue
-                            Console.WriteLine($"[WARNING] Skipping event with 0 attendees {startTime} - {endTime} @ {location}");
+                            Console.WriteLine($"Skipping event with 0 attendees {startTime} - {endTime} @ {location}");
                             continue;
                         }
 
@@ -101,7 +100,7 @@ namespace StudentIT.Roster.Summary
                         {
                             // People sometimes add personal and work emails to shifts. This shouldn't
                             // be a problem, but good to log it just in case
-                            Console.WriteLine($"[WARNING] Found event with multiple attendees {startTime}-{endTime} @ {location}. Using {internEmail}");
+                            Console.WriteLine($"Found event with multiple attendees {startTime}-{endTime} @ {location}. Using {internEmail}");
                         }
                         
                         if (!internHours.ContainsKey(internEmail))
@@ -112,21 +111,26 @@ namespace StudentIT.Roster.Summary
                     }
                 } else
                 {
-                    Console.WriteLine($"[ERROR] Got no events from {calendarId}. Is the selected time period correct? {request.TimeMin}-{request.TimeMax}");
+                    Console.WriteLine($"Got no events from {calendarId}. Is the selected time period correct? {request.TimeMin}-{request.TimeMax}");
                 }
             }
-            
-            return new Response(internHours);
+
+            var report = new EmailReport();
+            report.Send();
+
+            return new Response(internHours, report.RecipientEmails);
         }
     }
 
     public class Response
     {
         public Dictionary<string, double> Hours { get; set; }
+        public List<String> Email { get; set; }
 
-        public Response(Dictionary<string, double> message)
+        public Response(Dictionary<string, double> hoursResponse, List<String> emailResponse)
         {
-            Hours = message;
+            Hours = hoursResponse;
+            Email = emailResponse;
         }
     }
 }
