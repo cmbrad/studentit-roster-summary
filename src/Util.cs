@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StudentIT.Roster.Summary
 {
-    class Util
+    internal class Util
     {
 
     }

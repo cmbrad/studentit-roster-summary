@@ -1,61 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.IO;
+using DotLiquid;
 using MimeKit;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 
 namespace StudentIT.Roster.Summary
 {
-    class EmailReport
+    internal class EmailReport
     {
-        public List<String> RecipientEmails { get; private set; }
+        public List<string> RecipientEmails { get; }
 
         public EmailReport()
         {
             RecipientEmails = RecipientsFromEnvironment();
         }
 
-        public void Send()
+        public void Send(RosterSummary roster)
         {
-            var (address, port, username, password) = EmailServerDetailsFromEnvironment();
-
+            var (address, port, username, password, templateFilename) = EmailServerDetailsFromEnvironment();
+            Console.WriteLine($"Using template file {templateFilename}");
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Student IT and eLearning Support", "student-it@unimelb.edu.au"));
 
-            foreach (String emailAddress in RecipientEmails)
+            foreach (var emailAddress in RecipientEmails)
             {
                 message.To.Add(new MailboxAddress(emailAddress));
             }
-            message.Subject = "";
+            message.Subject = $"Shift Summary ({roster.StartDate.ToString("yyyy-MM-dd")} - {roster.EndDate.ToString("yyyy-MM-dd")})";
 
-            message.Body = new TextPart("plain") { Text = "Test" };
+
+            var model = new
+            {
+                TestVar = "Test"
+            };
+            Template template = Template.Parse(File.ReadAllText(Path.Combine("templates", templateFilename)));
+            var bodyText = template.Render(Hash.FromAnonymousObject(model));
+
+            message.Body = new TextPart("html") { Text = bodyText };
 
             using (var client = new SmtpClient())
             {
-                // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-                // client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                // Timeout connect to 10 seconds
-                client.Timeout = 10000;
+                Console.WriteLine("Sending email");
 
+                client.Timeout = 10000;
                 client.Connect(address, port);
 
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-                // Note: only needed if the SMTP server requires authentication
                 client.Authenticate(username, password);
 
-                Console.WriteLine("Sending email");
                 client.Send(message);
                 client.Disconnect(true);
             }
         }
 
-        private List<String> RecipientsFromEnvironment()
+        private List<string> RecipientsFromEnvironment()
         {
-            List<String> emailAddresses = new List<string>();
+            var emailAddresses = new List<string>();
 
-            for (int i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 var envVar = $"RECIPIENT_EMAIL_{i}";
                 var curEmail = Environment.GetEnvironmentVariable(envVar);
@@ -72,14 +75,15 @@ namespace StudentIT.Roster.Summary
             return emailAddresses;
         }
 
-        private (string, int, string, string) EmailServerDetailsFromEnvironment()
+        private (string, int, string, string, string) EmailServerDetailsFromEnvironment()
         {
             var address = Environment.GetEnvironmentVariable("SMTP_ADDRESS");
-            var port = Int32.Parse(Environment.GetEnvironmentVariable("SMTP_PORT"));
+            var port = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT"));
             var username = Environment.GetEnvironmentVariable("SMTP_USERNAME");
             var password = Environment.GetEnvironmentVariable("SMTP_PASSWORD");
+            var templateFilename = Environment.GetEnvironmentVariable("EMAIL_TEMPLATE");
 
-            return (address, port, username, password);
+            return (address, port, username, password, templateFilename);
         }
     }
 }

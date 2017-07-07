@@ -4,9 +4,9 @@ using System.IO;
 
 namespace StudentIT.Roster.Summary
 {
-    class InternProvider
+    internal class InternProvider
     {
-        string databaseLocation = Path.Combine(Path.GetTempPath(), "roster.db");
+        private string _databaseLocation = Path.Combine(Path.GetTempPath(), "roster.db");
 
         public void Init()
         {
@@ -15,8 +15,8 @@ namespace StudentIT.Roster.Summary
 
         public void CreateTables()
         {
-            Console.WriteLine($"[INFO] Creating tables in database at {databaseLocation}");
-            using (var connection = new SqliteConnection($"Data Source={databaseLocation}"))
+            Console.WriteLine($"[INFO] Creating tables in database at {_databaseLocation}");
+            using (var connection = new SqliteConnection($"Data Source={_databaseLocation}"))
             {
                 using (var command = connection.CreateCommand())
                 {
@@ -37,7 +37,7 @@ namespace StudentIT.Roster.Summary
         {
             Console.WriteLine($"[INFO] Adding intern {name} / {email}");
 
-            using (var connection = new SqliteConnection($"Data Source={databaseLocation}"))
+            using (var connection = new SqliteConnection($"Data Source={_databaseLocation}"))
             {
                 using (var command = connection.CreateCommand())
                 {
@@ -55,7 +55,7 @@ namespace StudentIT.Roster.Summary
         {
             Console.WriteLine($"[INFO] Getting name for {email}");
                       
-            using (var connection = new SqliteConnection($"Data Source={databaseLocation}"))
+            using (var connection = new SqliteConnection($"Data Source={_databaseLocation}"))
             {
                 using (var command = connection.CreateCommand())
                 {

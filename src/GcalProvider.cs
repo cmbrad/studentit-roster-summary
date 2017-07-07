@@ -12,9 +12,8 @@ namespace StudentIT.Roster.Summary
 {
     public static class GcalProvider
     {
-        // Configuration
-        static string[] Scopes = { CalendarService.Scope.CalendarReadonly };
-        static string ApplicationName = "StudentIT Roster Summary";
+        private static readonly string[] Scopes = { CalendarService.Scope.CalendarReadonly };
+        private const string ApplicationName = "StudentIT Roster Summary";
 
         public static string Base64Decode(string base64EncodedData)
         {
@@ -24,10 +23,8 @@ namespace StudentIT.Roster.Summary
 
         private static UserCredential CreateCredentials()
         {
-            UserCredential credential;
-
-            String encoded = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRETS");
-            String decoded = Base64Decode(encoded);
+            var encoded = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRETS");
+            var decoded = Base64Decode(encoded);
 
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(decoded));
 
@@ -39,7 +36,7 @@ namespace StudentIT.Roster.Summary
                     DataStore = new EnvironmentDataStore("GOOGLE_AUTH_TOKEN")
                 });
 
-            credential = new AuthorizationCodeInstalledApp(
+            var credential = new AuthorizationCodeInstalledApp(
                 flow,
                 new PromptCodeReceiver()).AuthorizeAsync("user", CancellationToken.None).Result;
 

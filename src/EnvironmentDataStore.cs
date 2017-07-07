@@ -9,12 +9,11 @@ namespace StudentIT.Roster.Summary
 {
     public class EnvironmentDataStore : IDataStore
     {
-        readonly string environmentKey;
-        public string EnvironmentKey { get { return environmentKey; } }
+        public string EnvironmentKey { get; }
 
         public EnvironmentDataStore(string environmentKey)
         {
-            this.environmentKey = environmentKey;
+            EnvironmentKey = environmentKey;
         }
 
         public string Base64Encode(string plainText)
@@ -40,7 +39,7 @@ namespace StudentIT.Roster.Summary
 
             var serialized = NewtonsoftJsonSerializer.Instance.Serialize(value);
             var encoded = Base64Encode(serialized);
-            Environment.SetEnvironmentVariable(this.environmentKey, encoded);
+            Environment.SetEnvironmentVariable(EnvironmentKey, encoded);
 
             return Task.Delay(0);
         }
@@ -52,7 +51,7 @@ namespace StudentIT.Roster.Summary
                 throw new ArgumentException("Key MUST have a value");
             }
 
-            Environment.SetEnvironmentVariable(this.environmentKey, "");
+            Environment.SetEnvironmentVariable(EnvironmentKey, "");
 
             return Task.Delay(0);
         }
@@ -65,7 +64,7 @@ namespace StudentIT.Roster.Summary
             }
 
             TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
-            var encoded = Environment.GetEnvironmentVariable(this.environmentKey);
+            var encoded = Environment.GetEnvironmentVariable(EnvironmentKey);
 
             if (encoded != null)
             {
@@ -88,7 +87,7 @@ namespace StudentIT.Roster.Summary
 
         public Task ClearAsync()
         {
-            Environment.SetEnvironmentVariable(this.environmentKey, "");
+            Environment.SetEnvironmentVariable(EnvironmentKey, "");
 
             return Task.Delay(0);
         }

@@ -8,7 +8,7 @@ namespace StudentIT.Roster.Summary
 {
     public class Handler
     {
-        List<String> calendars = new List<string> {
+        private readonly List<string> _calendars = new List<string> {
             "cs45o1aqp0nc3sff4d4i6q1jms@group.calendar.google.com", // Baillieu
             "1b6sqii4bqnqr1588ba80r8nts@group.calendar.google.com", // BEE
             "opshfv1nkjm6o29rhcvh0458kk@group.calendar.google.com", // ERC
@@ -52,15 +52,17 @@ namespace StudentIT.Roster.Summary
 
             Console.WriteLine($"Loading summary for period {periodStart} - {periodEnd}");
 
+            RosterSummary rosterSummary = new RosterSummary(periodStart, periodEnd);
+
             var service = GcalProvider.MakeService();
             var internProvider = new InternProvider();
             internProvider.Init();
             var internHours = new Dictionary<string, double>();
 
             // Define parameters of request.
-            foreach (String calendarId in calendars)
+            foreach (var calendarId in _calendars)
             {
-                var request = service.Events.List(calendarId: calendarId);
+                var request = service.Events.List(calendarId);
                 request.TimeMin = periodStart;
                 request.TimeMax = periodEnd;
                 request.ShowDeleted = false;
@@ -116,7 +118,7 @@ namespace StudentIT.Roster.Summary
             }
 
             var report = new EmailReport();
-            report.Send();
+            report.Send(rosterSummary);
 
             return new Response(internHours, report.RecipientEmails);
         }
@@ -125,9 +127,9 @@ namespace StudentIT.Roster.Summary
     public class Response
     {
         public Dictionary<string, double> Hours { get; set; }
-        public List<String> Email { get; set; }
+        public List<string> Email { get; set; }
 
-        public Response(Dictionary<string, double> hoursResponse, List<String> emailResponse)
+        public Response(Dictionary<string, double> hoursResponse, List<string> emailResponse)
         {
             Hours = hoursResponse;
             Email = emailResponse;
