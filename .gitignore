@@ -253,4 +253,4 @@ secrets.*.yml
 
 # People storage
 extra/people.db
-Employees.sql
+scripts/Employees.sql
