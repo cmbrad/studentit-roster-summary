@@ -250,3 +250,7 @@ deploy-package.zip
 
 # Secrets
 secrets.*.yml
+
+# People storage
+extra/people.db
+Employees.sql

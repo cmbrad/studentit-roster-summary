@@ -6,60 +6,17 @@ namespace StudentIT.Roster.Summary
 {
     internal class InternProvider
     {
-        private string _databaseLocation = Path.Combine(Path.GetTempPath(), "roster.db");
+        private readonly string _databaseLocation = Path.Combine("extra", "people.db");
 
-        public void Init()
+        public string NameFromEmail(string email)
         {
-            CreateTables();
-        }
-
-        public void CreateTables()
-        {
-            Console.WriteLine($"[INFO] Creating tables in database at {_databaseLocation}");
-            using (var connection = new SqliteConnection($"Data Source={_databaseLocation}"))
-            {
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS Intern (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL
-                    );";
-
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public void AddIntern(string name, string email)
-        {
-            Console.WriteLine($"[INFO] Adding intern {name} / {email}");
-
-            using (var connection = new SqliteConnection($"Data Source={_databaseLocation}"))
-            {
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = "INSERT INTO Intern (name, email) VALUES ($name, $email);";
-                    command.Parameters.AddWithValue("$name", name);
-                    command.Parameters.AddWithValue("email", email);
-
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public bool TryGetNameFromEmail(string email, out string name)
-        {
-            Console.WriteLine($"[INFO] Getting name for {email}");
+            Console.WriteLine($"Getting name for {email}");
                       
             using (var connection = new SqliteConnection($"Data Source={_databaseLocation}"))
             {
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT name FROM Intern WHERE email = $email";
+                    command.CommandText = "SELECT name FROM Employees WHERE email = $email";
                     command.Parameters.AddWithValue("email", email);
 
                     connection.Open();
@@ -69,15 +26,12 @@ namespace StudentIT.Roster.Summary
                     {
                         while (reader.Read())
                         {
-                            name = reader.GetString(0);
-                            return true;
+                            return reader.GetString(0);
                         }
                     }
                 }
             }
-
-            name = null;
-            return false;
+            return null;
         }
     }
 }

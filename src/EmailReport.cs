@@ -49,7 +49,7 @@ namespace StudentIT.Roster.Summary
             Template.RegisterSafeType(typeof(Employee), new[] {"Name", "TotalHours", "Shifts"});
             Template.RegisterFilter(typeof(HoursFilter));
             Template.RegisterFilter(typeof(ShiftStyleFilter));
-            Template template = Template.Parse(File.ReadAllText(Path.Combine("templates", templateFilename)));
+            Template template = Template.Parse(File.ReadAllText(Path.Combine("extra", templateFilename)));
             var bodyText = template.Render(Hash.FromAnonymousObject(model));
 
             Console.WriteLine(bodyText);

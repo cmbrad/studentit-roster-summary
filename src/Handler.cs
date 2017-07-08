@@ -56,7 +56,6 @@ namespace StudentIT.Roster.Summary
 
             var service = GcalProvider.MakeService();
             var internProvider = new InternProvider();
-            internProvider.Init();
 
             // Define parameters of request.
             foreach (var calendarId in _calendars)
@@ -108,7 +107,9 @@ namespace StudentIT.Roster.Summary
                             Console.WriteLine($"Found event with multiple attendees {startTime}-{endTime} @ {location}. Using {internEmail}");
                         }
 
-                        var employee = EmployeeByName(internEmail, rosterSummary);
+                        var internName = internProvider.NameFromEmail(internEmail);
+
+                        var employee = EmployeeByName(internName ?? internEmail, rosterSummary);
                         var hours = (endTime - startTime).Value.TotalHours;
                         DateTime curDate = rosterSummary.StartDate;
                         for (var i = 0; i < rosterSummary.Days; i++)
