@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Amazon.S3.Model;
 using DotLiquid;
 using MimeKit;
 using MailKit.Net.Smtp;
@@ -30,13 +31,28 @@ namespace StudentIT.Roster.Summary
             message.Subject = $"Shift Summary ({roster.StartDate.ToString("yyyy-MM-dd")} - {roster.EndDate.ToString("yyyy-MM-dd")})";
 
 
+            var tableHeader = new List<string>();
+            DateTime curDate = roster.StartDate;
+            while (curDate < roster.EndDate)
+            {
+                tableHeader.Add(curDate.ToString("dd-MM"));
+                curDate = curDate.AddDays(1);
+            }
+            tableHeader.Add("Total");
+
+            roster.Employees.Sort((a, b) => a.Name.CompareTo(b.Name));
             var model = new
             {
-                TestVar = "Test"
+                Employees = roster.Employees,
+                Header = tableHeader
             };
+            Template.RegisterSafeType(typeof(Employee), new[] {"Name", "TotalHours", "Shifts"});
+            Template.RegisterFilter(typeof(HoursFilter));
+            Template.RegisterFilter(typeof(ShiftStyleFilter));
             Template template = Template.Parse(File.ReadAllText(Path.Combine("templates", templateFilename)));
             var bodyText = template.Render(Hash.FromAnonymousObject(model));
 
+            Console.WriteLine(bodyText);
             message.Body = new TextPart("html") { Text = bodyText };
 
             using (var client = new SmtpClient())
@@ -84,6 +100,22 @@ namespace StudentIT.Roster.Summary
             var templateFilename = Environment.GetEnvironmentVariable("EMAIL_TEMPLATE");
 
             return (address, port, username, password, templateFilename);
+        }
+    }
+
+    internal static class HoursFilter
+    {
+        public static string Hours(double input)
+        {
+            return String.Format("{0:F}", input);
+        }
+    }
+
+    internal static class ShiftStyleFilter
+    {
+        public static string ShiftStyle(double input)
+        {
+            return input == 0.0 ? "grey" : "white";
         }
     }
 }

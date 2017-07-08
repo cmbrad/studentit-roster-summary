@@ -1,1 +1,53 @@
-Hello world and {{ TestVar }}
+<!doctype html>
+<html lang="en">
+<head>
+	<style>
+		table, th, td {
+			border:1px solid black;
+		}
+
+		table {
+			border-collapse: collapse;
+			width:100%;
+		}
+
+		th, td {
+			text-align: left;
+			padding: 8px;
+		}
+
+		th {
+			background-color: #31465C;
+			color:white;
+		}
+
+		.white {
+		    background-color: white;
+		}
+
+		.grey {
+		    background-color: #E0E0E0;
+		}
+	</style>
+</head>
+
+<body>
+<table>
+    <tr>
+	<td></td>
+	{%- for item in Header -%}
+	<th>{{item}}</th>
+	{%- endfor -%}
+    </tr>
+	{%- for employee in Employees -%}
+	<tr>
+		<th>{{employee.Name}}</th>
+		{%- for shift in employee.Shifts -%}
+		<td class="{{ shift | shift_style }}">{{shift | hours}}</td>
+		{%- endfor -%}
+		<td class="{{ employee.total_hours | shift_style }}">{{employee.total_hours | hours}}</td>
+	</tr>
+	{%- endfor -%}
+</table>
+</body>
+</html>

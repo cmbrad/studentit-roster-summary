@@ -8,7 +8,7 @@ provider:
   stage: dev
   runtime: dotnetcore1.0
   region: ap-southeast-2
-  memorySize: 256
+  memorySize: 128
   timeout: 30
   stackTags:
     Purpose: StudentIT

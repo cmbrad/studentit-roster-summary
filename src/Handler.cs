@@ -57,7 +57,6 @@ namespace StudentIT.Roster.Summary
             var service = GcalProvider.MakeService();
             var internProvider = new InternProvider();
             internProvider.Init();
-            var internHours = new Dictionary<string, double>();
 
             // Define parameters of request.
             foreach (var calendarId in _calendars)
@@ -96,6 +95,10 @@ namespace StudentIT.Roster.Summary
                             Console.WriteLine($"Skipping event with 0 attendees {startTime} - {endTime} @ {location}");
                             continue;
                         }
+                        if (startTime < rosterSummary.StartDate || endTime > rosterSummary.EndDate)
+                        {
+                            Console.WriteLine($"Skipping event which is outside of roster timeframe {startTime} - {endTime} @ {location}");
+                        }
 
                         var internEmail = eventItem.Attendees[0].Email;
                         if (eventItem.Attendees.Count > 1)
@@ -104,12 +107,19 @@ namespace StudentIT.Roster.Summary
                             // be a problem, but good to log it just in case
                             Console.WriteLine($"Found event with multiple attendees {startTime}-{endTime} @ {location}. Using {internEmail}");
                         }
-                        
-                        if (!internHours.ContainsKey(internEmail))
+
+                        var employee = EmployeeByName(internEmail, rosterSummary);
+                        var hours = (endTime - startTime).Value.TotalHours;
+                        DateTime curDate = rosterSummary.StartDate;
+                        for (var i = 0; i < rosterSummary.Days; i++)
                         {
-                            internHours.Add(internEmail, 0.0);
+                            if (curDate.Date == endTime.Value.Date)
+                            {
+                                employee.Shifts[i] += hours;
+                                break;
+                            }
+                            curDate = curDate.AddDays(1);
                         }
-                        internHours[internEmail] += (endTime - startTime).Value.TotalHours;
                     }
                 } else
                 {
@@ -120,18 +130,37 @@ namespace StudentIT.Roster.Summary
             var report = new EmailReport();
             report.Send(rosterSummary);
 
-            return new Response(internHours, report.RecipientEmails);
+            return new Response(report.RecipientEmails);
+        }
+
+        private Employee EmployeeByName(string name, RosterSummary rosterSummary)
+        {
+            Employee employeeWithName = null;
+
+            foreach (Employee employee in rosterSummary.Employees)
+            {
+                if (employee.Name == name)
+                {
+                    employeeWithName = employee;
+                }
+            }
+
+            if (employeeWithName == null)
+            {
+                employeeWithName = new Employee(name, rosterSummary.Days);
+                rosterSummary.Employees.Add(employeeWithName);
+            }
+
+            return employeeWithName;
         }
     }
 
     public class Response
     {
-        public Dictionary<string, double> Hours { get; set; }
         public List<string> Email { get; set; }
 
-        public Response(Dictionary<string, double> hoursResponse, List<string> emailResponse)
+        public Response(List<string> emailResponse)
         {
-            Hours = hoursResponse;
             Email = emailResponse;
         }
     }

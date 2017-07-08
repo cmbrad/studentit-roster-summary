@@ -1,18 +1,18 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 
 namespace StudentIT.Roster.Summary
 {
     internal class Employee
     {
         public string Name { get; }
-        public List<int> Shifts { get; }
+        public double TotalHours => Shifts.Sum();
+        public double[] Shifts { get; }
 
-        public Employee(string name)
+        public Employee(string name, int days)
         {
             Name = name;
-            Shifts = new List<int>();
+            Shifts = new double[days];
         }
     }
 }

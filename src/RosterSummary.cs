@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace StudentIT.Roster.Summary
 {
@@ -9,6 +8,7 @@ namespace StudentIT.Roster.Summary
         public DateTime StartDate { get; }
         public DateTime EndDate { get; }
         public List<Employee> Employees { get; }
+        public int Days => (int)(EndDate - StartDate).TotalDays;
 
         public RosterSummary(DateTime startDate, DateTime endDate)
         {
