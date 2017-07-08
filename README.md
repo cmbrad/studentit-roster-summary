@@ -70,6 +70,18 @@ powershell .\build.ps1 && serverless deploy -s dev && serverless invoke -f summa
 serverless logs -f summary -t
 ```
 
+### Email -> Name translation
+The translation depends on a file called people.db in the extra folder. It is a sqlite database of the form
+
+```
+CREATE TABLE "Employees" ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `email` TEXT NOT NULL UNIQUE )
+```
+
+Insert people into the database with
+
+```
+INSERT INTO Employees ('name', 'email') VALUES ('YOUR_NAME', 'YOUR_EMAIL')
+```
 
 ## Libraries
 * Serverless (https://github.com/serverless/serverless/)
