@@ -28,7 +28,9 @@ namespace StudentIT.Roster.Summary
             {
                 message.To.Add(new MailboxAddress(emailAddress));
             }
-            message.Subject = $"Shift Summary ({roster.StartDate.ToString("yyyy-MM-dd")} - {roster.EndDate.ToString("yyyy-MM-dd")})";
+            // Take 1 day off the enddate as it's configured to search up to midnight on the last day, which means effectively
+            // the roster is up to the end of the day before. Display like this for clarity
+            message.Subject = $"Shift Summary ({roster.StartDate.ToString("yyyy-MM-dd")} - {roster.EndDate.AddDays(-1).ToString("yyyy-MM-dd")})";
 
 
             var tableHeader = new List<string>();
@@ -52,7 +54,6 @@ namespace StudentIT.Roster.Summary
             Template template = Template.Parse(File.ReadAllText(Path.Combine("extra", templateFilename)));
             var bodyText = template.Render(Hash.FromAnonymousObject(model));
 
-            Console.WriteLine(bodyText);
             message.Body = new TextPart("html") { Text = bodyText };
 
             using (var client = new SmtpClient())

@@ -20,6 +20,17 @@ functions:
   summary:
     handler: CsharpHandlers::StudentIT.Roster.Summary.Handler::MakeSummary
     environment: ${file(secrets.${self:custom.stage}.yml)}
+    events: ${self:custom.${self:custom.stage}.events}
 
 custom:
   stage: "${opt:stage, self:provider.stage}"
+  prod:
+    events:
+      - schedule:
+          rate: cron(0 7 ? * THU *)
+          enabled: false
+  dev:
+    events:
+      - schedule:
+          rate: cron(0 7 ? * THU *)
+          enabled: true

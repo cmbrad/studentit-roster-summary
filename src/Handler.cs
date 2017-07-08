@@ -21,15 +21,15 @@ namespace StudentIT.Roster.Summary
             return DateTime.TryParse(dateString, out DateTime date) ? date : getDefault();
         }
 
-        private (DateTime, DateTime) GetRosterBounds()
+        private (DateTime, DateTime, bool) GetRosterBounds()
         {
-            DateTime periodStart, periodEnd;
+            var periodStart = GetDateFromEnvOrDefault("ROSTER_START_DATE", GetLastRosterStartDate);
+            var periodEnd = periodStart.AddDays(14); // Roster period is 14 days
+            // Run if within a week of roster end, or if a custom date has been supplied
+            var shouldRun = Environment.GetEnvironmentVariable("ROSTER_START_DATE") != null || 
+                DateTime.Now > periodEnd.AddDays(-7);
 
-            periodStart = GetDateFromEnvOrDefault("ROSTER_START_DATE", GetLastRosterStartDate);
-            // Roster period is 14 days
-            periodEnd = periodStart.AddDays(14);
-
-            return (periodStart, periodEnd);
+            return (periodStart, periodEnd, shouldRun);
         }
 
         private DateTime GetLastRosterStartDate()
@@ -43,12 +43,18 @@ namespace StudentIT.Roster.Summary
             return startDate;
         }
 
-        public Response MakeSummary()
+        public void MakeSummary()
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            var (periodStart, periodEnd) = GetRosterBounds();
+            var (periodStart, periodEnd, shouldRun) = GetRosterBounds();
+
+            if (!shouldRun)
+            {
+                // Workaround the fact that you cannot schedule a lambda to run every 2 weeks
+                Console.WriteLine("Cancelling summary as it's not the end of a pay week");
+            }
 
             Console.WriteLine($"Loading summary for period {periodStart} - {periodEnd}");
 
@@ -130,8 +136,6 @@ namespace StudentIT.Roster.Summary
 
             var report = new EmailReport();
             report.Send(rosterSummary);
-
-            return new Response(report.RecipientEmails);
         }
 
         private Employee EmployeeByName(string name, RosterSummary rosterSummary)
@@ -153,16 +157,6 @@ namespace StudentIT.Roster.Summary
             }
 
             return employeeWithName;
-        }
-    }
-
-    public class Response
-    {
-        public List<string> Email { get; set; }
-
-        public Response(List<string> emailResponse)
-        {
-            Email = emailResponse;
         }
     }
 }
