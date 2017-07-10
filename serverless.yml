@@ -2,6 +2,7 @@ service: studentit-roster
 
 plugins:
   - serverless-secrets-plugin
+  - serverless-dotnet-package
 
 provider:
   name: aws
@@ -12,9 +13,6 @@ provider:
   timeout: 60
   stackTags:
     Purpose: StudentIT
-
-package:
-  artifact: bin/release/netcoreapp1.1/studentit-roster-summary.zip
 
 functions:
   summary:
@@ -34,3 +32,9 @@ custom:
       - schedule:
           rate: cron(0 7 ? * THU *)
           enabled: true
+
+  dotnetpackage:
+    include:
+      - extra/**
+    configuration: Release
+    framework: netcoreapp1.1
