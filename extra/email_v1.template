@@ -3,7 +3,8 @@
 <head>
 	<style>
 		table, th, td {
-			border:1px solid black;
+			border: 1px solid black;
+			white-space: nowrap;
 		}
 
 		table {
@@ -21,11 +22,21 @@
 			color:white;
 		}
 
-		.white {
-		    background-color: white;
+		.top-header-cell {
+			text-align: center;
 		}
 
-		.grey {
+		.total-cell {
+			background-color: white;
+			text-align: center;
+		}
+
+		.hours-full {
+		    background-color: white;
+			text-align: center;
+		}
+
+		.hours-empty {
 		    background-color: #E0E0E0;
 		}
 	</style>
@@ -36,7 +47,7 @@
     <tr>
 	<td></td>
 	{%- for item in Header -%}
-	<th>{{item}}</th>
+	<th class="top-header-cell">{{item}}</th>
 	{%- endfor -%}
     </tr>
 	{%- for employee in Employees -%}
@@ -45,7 +56,7 @@
 		{%- for shift in employee.Shifts -%}
 		<td class="{{ shift | shift_style }}">{{shift | hours}}</td>
 		{%- endfor -%}
-		<td class="{{ employee.total_hours | shift_style }}">{{employee.total_hours | hours}}</td>
+		<td class="total-cell">{{employee.total_hours | hours}}</td>
 	</tr>
 	{%- endfor -%}
 </table>

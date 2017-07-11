@@ -108,7 +108,8 @@ namespace StudentIT.Roster.Summary
     {
         public static string Hours(double input)
         {
-            return String.Format("{0:F}", input);
+            // for readability return blank strings if 0 hours worked
+            return input == 0.0  ? "" : String.Format("{0:F}", input);
         }
     }
 
@@ -116,7 +117,7 @@ namespace StudentIT.Roster.Summary
     {
         public static string ShiftStyle(double input)
         {
-            return input == 0.0 ? "grey" : "white";
+            return input == 0.0 ? "hours-empty" : "hours-full";
         }
     }
 }
