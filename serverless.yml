@@ -18,6 +18,7 @@ provider:
 functions:
   summary:
     handler: CsharpHandlers::StudentIT.Roster.Summary.Handler::MakeSummary
+    description: Send email summary of shifts in a StudentIT roster period
     environment: ${file(secrets.${self:custom.stage}.yml)}
     events: ${self:custom.${self:custom.stage}.events}
 
@@ -27,13 +28,13 @@ custom:
   prod:
     events:
       - schedule:
-          rate: cron(0 7 ? * THU *)
-          enabled: false
+          rate: cron(0 6 ? * THU *)
+          enabled: true
   dev:
     events:
       - schedule:
-          rate: cron(0 7 ? * THU *)
-          enabled: true
+          rate: cron(0 6 ? * THU *)
+          enabled: false
 
   dotnetpackage:
     include:
