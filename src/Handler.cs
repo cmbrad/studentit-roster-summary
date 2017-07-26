@@ -36,10 +36,12 @@ namespace StudentIT.Roster.Summary
         {
             DateTime rosterEpoch = new DateTime(2017, 7, 1, 0, 0, 0);
             DateTime startDate = rosterEpoch;
+            Console.WriteLine("Calculating last roster start date");
             while (startDate.AddDays(14) < DateTime.Now)
             {
-                startDate.AddDays(14);
+                startDate = startDate.AddDays(14);
             }
+            Console.WriteLine($"Found last roster start date to be {startDate}");
             return startDate;
         }
 
@@ -48,12 +50,13 @@ namespace StudentIT.Roster.Summary
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
+            Console.WriteLine("Getting roster bounds");
             var (periodStart, periodEnd, shouldRun) = GetRosterBounds();
 
             if (!shouldRun)
             {
                 // Workaround the fact that you cannot schedule a lambda to run every 2 weeks
-                Console.WriteLine("Cancelling summary as it's not the end of a pay week");
+                Console.WriteLine("Cancelling summary as it's not the end of a pay period");
                 return;
             }
 
