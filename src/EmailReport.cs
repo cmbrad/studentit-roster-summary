@@ -40,7 +40,6 @@ namespace StudentIT.Roster.Summary
                 tableHeader.Add(curDate.ToString("dd-MM"));
                 curDate = curDate.AddDays(1);
             }
-            tableHeader.Add("Total");
 
             roster.Employees.Sort((a, b) => a.Name.CompareTo(b.Name));
             var model = new
