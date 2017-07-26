@@ -54,6 +54,7 @@ namespace StudentIT.Roster.Summary
             {
                 // Workaround the fact that you cannot schedule a lambda to run every 2 weeks
                 Console.WriteLine("Cancelling summary as it's not the end of a pay week");
+                return;
             }
 
             Console.WriteLine($"Loading summary for period {periodStart} - {periodEnd}");
