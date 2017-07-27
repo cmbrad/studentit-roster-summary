@@ -74,7 +74,7 @@ namespace StudentIT.Roster.Summary
         {
             var emailAddresses = new List<string>();
 
-            for (var i = 0; i < 100; i++)
+            for (var i = 1; i < 100; i++)
             {
                 var envVar = $"RECIPIENT_EMAIL_{i}";
                 var curEmail = Environment.GetEnvironmentVariable(envVar);
@@ -82,6 +82,8 @@ namespace StudentIT.Roster.Summary
                 {
                     Console.WriteLine($"{envVar}={curEmail}");
                     emailAddresses.Add(curEmail);
+                } else
+                {
                     break;
                 }
             }
