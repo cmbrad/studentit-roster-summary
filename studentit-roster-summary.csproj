@@ -18,7 +18,7 @@
     <PackageReference Include="DotLiquid" Version="2.0.145" />
     <PackageReference Include="MailKit" Version="1.16.2" />
     <PackageReference Include="Microsoft.Data.SQLite" Version="1.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Amazon.Lambda.Core" Version="1.0.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.1.0" />
     <PackageReference Include="Amazon.Lambda.Tools" Version="1.6.0">
